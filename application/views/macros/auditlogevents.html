@@ -19,8 +19,18 @@
             {% endif %}
         </span>
 
-        {% if event.plugin.sandbox_profile_id %}
-            <a href="{{base_url}}profiles/{{event.plugin.sandbox_profile.screen_name|e}}/plugins/detail/{{event.plugin.pfs_id | urlencode | e}}">{{event.plugin.name | e}}</a>
+        {% if not event.plugin.name and event.old_state %}
+            <strike>{{event.old_state.meta.name}}</strike>
+            {% if event.old_state.meta.sandbox_profile_id %}
+                in sandbox
+            {% endif %}
+        {% elseif not event.plugin.name and event.new_state %}
+            <strike>{{event.new_state.meta.name}}</strike>
+            {% if event.new_state.meta.sandbox_profile_id %}
+                in sandbox
+            {% endif %}
+        {% elseif event.plugin.sandbox_profile_id %}
+            <a href="{{base_url}}profiles/{{event.plugin.sandbox_profile.screen_name|e}}/plugins/detail/{{event.plugin.pfs_id | urlencode | e}}">{{event.plugin.name | e}}</a> in sandbox
         {% else %}
             <a href="{{base_url}}plugins/detail/{{event.plugin.pfs_id | urlencode | e}}">{{event.plugin.name | e}}</a>
         {% endif %}
@@ -28,14 +38,12 @@
         <span class="details">
             {% if 'deployed_from_sandbox' == event.action %}
                 {% if event.details.sandbox_profile %}
-                    from <a class="actor" href="{{base_url}}profiles/{{event.details.sandbox_profile.screen_name|e}}/plugins/detail/{{event.plugin.pfs_id | urlencode | e}}">{{event.details.sandbox_profile.screen_name|e}}</a>
+                    from <a class="actor" href="{{base_url}}profiles/{{event.details.sandbox_profile.screen_name|e}}">{{event.details.sandbox_profile.screen_name|e}}</a>
                 {% else %}
-                    to <a href="{{base_url}}plugins/detail/{{event.plugin.pfs_id | urlencode | e}}">public</a>
+                    from sandbox to public
                 {% endif %}
             {% elseif 'copied_to_sandbox' == event.action %}
-                to <a class="actor" href="{{base_url}}profiles/{{event.details.sandbox_profile.screen_name|e}}/plugins/detail/{{event.plugin.pfs_id | urlencode | e}}">sandbox</a>
-            {% elseif 'requested_push' == event.action %}
-                from sandbox
+                to sandbox
             {% elseif 'remove_trusted' == event.action or 'add_trusted' == event.action %}
                 for <a class="actor" href="{{base_url}}profiles/{{event.details.profile.screen_name|e}}">{{event.details.profile.screen_name|e}}</a>
             {% else %}

@@ -1,18 +1,19 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    {% set plugin_name_e as plugin.name | e %}
-    {% set screen_name_e as screen_name | e %}
+    {% set plugin_name_e = plugin.name | e %}
+    {% set screen_name_e = screen_name | e %}
     {% blocktrans %}Make {{ screen_name_e }} trusted for "{{plugin_name_e}}"{% endblocktrans %}
 {% endblock %}
 
 {% block content %}
-    {% set plugin_name_e as plugin.name | e %}
-    {% set screen_name_e as screen_name | e %}
+    {% set plugin_name_e = plugin.name | e %}
+    {% set screen_name_e = screen_name | e %}
 
     <h2>{{plugin.name | e}}</h2>
 
     <form action="" method="POST">
+        <input type="hidden" name="crumb" value="{{ crumb }}" />
         <p>{% blocktrans %}Make {{ screen_name_e }} trusted for "{{plugin_name_e}}"{% endblocktrans %}</p>
         <div>
             <input type="submit" value="{% trans "Add as trusted" %}" />

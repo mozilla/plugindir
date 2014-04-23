@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    {% set plugin_name_e as plugin.name | e %}
+    {% set plugin_name_e = plugin.name | e %}
     {% blocktrans %}Delete plugin "{{plugin_name_e}}"{% endblocktrans %}
 {% endblock %}
 
@@ -10,6 +10,7 @@
     <h2>{{plugin.name | e}}</h2>
 
     <form action="" method="POST">
+        <input type="hidden" name="crumb" value="{{ crumb }}" />
         <p>{% trans "Delete this plugin?" %}</p>
         <div>
             <input type="submit" value="{% trans "Delete plugin" %}" />

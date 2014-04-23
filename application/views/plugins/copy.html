@@ -1,13 +1,14 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    {% set plugin_name_e as plugin.name | e %}
+    {% set plugin_name_e = plugin.name | e %}
     {% blocktrans %}Copy plugin "{{plugin_name_e}}" to sandbox{% endblocktrans %}
 {% endblock %}
 
 {% block content %}
 
     <form action="" method="POST">
+        <input type="hidden" name="crumb" value="{{ crumb }}" />
         <p>{% trans "Copy this plugin to your sandbox?" %}</p>
         <div>
             <input type="submit" value="{% trans "Copy to Sandbox" %}" />
