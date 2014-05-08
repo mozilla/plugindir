@@ -1,0 +1,6 @@
+htdocs/.htaccess
+htdocs/index.php
+application/config/config-local.php
+application/logs
+application/cache
+application/cache/twig

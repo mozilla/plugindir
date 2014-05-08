@@ -44,30 +44,30 @@ class Plugin_Model extends ORM_Resource {
      */
     public static $defaults = array(
         'os_name' => '*',
-        'app_id' => '{ec8030f7-c20a-464f-9b0e-13a3a9e97384}', 
-        'app_release' => '*', 
-        'app_version' => '*', 
-        'locale' => '*', 
-        'name' => '', 
-        'vendor' => '', 
-        'description' => '', 
-        'version' => '0.0.0', 
+        'app_id' => '{ec8030f7-c20a-464f-9b0e-13a3a9e97384}',
+        'app_release' => '*',
+        'app_version' => '*',
+        'locale' => '*',
+        'name' => '',
+        'vendor' => '',
+        'description' => '',
+        'version' => '0.0.0',
         'detected_version' => '0.0.0',
         'detection_type' => 'original',
-        'guid' => '', 
-        'vulnerability_description' => '', 
-        'vulnerability_url' => '', 
-        'filename' => '', 
-        'url' => '', 
-        'icon_url' => '', 
-        'license_url' => '', 
-        'manual_installation_url' => '', 
-        'xpi_location' => '', 
-        'installer_location' => '', 
-        'installer_hash' => '', 
-        'installer_shows_ui' => '', 
-        'needs_restart' => '', 
-        'xpcomabi' => '', 
+        'guid' => '',
+        'vulnerability_description' => '',
+        'vulnerability_url' => '',
+        'filename' => '',
+        'url' => '',
+        'icon_url' => '',
+        'license_url' => '',
+        'manual_installation_url' => '',
+        'xpi_location' => '',
+        'installer_location' => '',
+        'installer_hash' => '',
+        'installer_shows_ui' => '',
+        'needs_restart' => '',
+        'xpcomabi' => '',
         'min' => '',
         'max' => '',
     );
@@ -77,7 +77,7 @@ class Plugin_Model extends ORM_Resource {
     public static $properties = array();
 
     // }}}
-    
+
     /**
      * Assemble a count of releases by plugin.
      */
@@ -141,7 +141,7 @@ class Plugin_Model extends ORM_Resource {
 
         // Assemble all aliases and collate into appropriate section.
         foreach ($this->pluginaliases as $alias) {
-            $out['aliases'][$alias->is_regex ? 'regex' : 'literal'][] = 
+            $out['aliases'][$alias->is_regex ? 'regex' : 'literal'][] =
                 $alias->alias;
         }
 
@@ -161,12 +161,12 @@ class Plugin_Model extends ORM_Resource {
             $release_out = array();
             foreach ($release->table_columns as $name=>$def) {
 
-                // Skip empty release columns, columns named for skip, and any 
-                // columns whose redundant values duplicate the plugin metadata 
+                // Skip empty release columns, columns named for skip, and any
+                // columns whose redundant values duplicate the plugin metadata
                 // of the same name.
                 if (empty($release->{$name})) continue;
                 if (in_array($name, $release_skip_names)) continue;
-                if (isset($out['meta'][$name]) && 
+                if (isset($out['meta'][$name]) &&
                     $out['meta'][$name] == $release->{$name}) continue;
 
                 $value = $release->{$name};
@@ -203,13 +203,13 @@ class Plugin_Model extends ORM_Resource {
         $all_errors = array();
 
         $meta_errors = $this->validate_release($plugin_data['meta']);
-        if (!empty($meta_errors)) 
+        if (!empty($meta_errors))
             $all_errors['meta'] = $meta_errors;
 
         $releases_errors = array();
         foreach ($plugin_data['releases'] as $idx=>$release_data) {
-            $release_errors = $this->validate_release($release_data); 
-            if (!empty($release_errors)) 
+            $release_errors = $this->validate_release($release_data);
+            if (!empty($release_errors))
                 $releases_errors['release_'.$idx] = $release_errors;
         }
         if (!empty($releases_errors))
@@ -238,7 +238,7 @@ class Plugin_Model extends ORM_Resource {
                 $field_errors[] = 'unknown_property';
                 continue;
             }
-            
+
             $prop_spec = self::$properties[$name];
             if (isset($prop_spec['validation'])) {
 
@@ -304,7 +304,7 @@ class Plugin_Model extends ORM_Resource {
             );
         }
 
-        // Get all the mimetypes handled by the plugin, adding to the DB first 
+        // Get all the mimetypes handled by the plugin, adding to the DB first
         // if necessary.
         $mime_ids = array();
         if (isset($plugin_data['mimes'])) {
@@ -326,13 +326,13 @@ class Plugin_Model extends ORM_Resource {
 
         // Set up aliases accumulator
         $aliases = array(
-            'literal' => isset($plugin_data['aliases']['literal']) ? 
+            'literal' => isset($plugin_data['aliases']['literal']) ?
                 $plugin_data['aliases']['literal'] : array(),
-            'regex' => isset($plugin_data['aliases']['regex']) ? 
+            'regex' => isset($plugin_data['aliases']['regex']) ?
                 $plugin_data['aliases']['regex'] : array(),
         );
 
-        // Iterate through each of the known releases and update/create 
+        // Iterate through each of the known releases and update/create
         // records for each.
         $releases = array();
         $release_ids = array();
@@ -340,7 +340,7 @@ class Plugin_Model extends ORM_Resource {
 
             // Assemble the release data with defaults from plugin data.
             $release_data = array_merge(
-                Plugin_Model::$defaults, PluginRelease_Model::$defaults, 
+                Plugin_Model::$defaults, PluginRelease_Model::$defaults,
                 $meta, $release_data
             );
             unset($release_data['created']);
@@ -360,7 +360,7 @@ class Plugin_Model extends ORM_Resource {
 
             // Find the designated OS and point the release to it.
             $os = ORM::find_or_insert(
-                'os', $release_data['os_name'], 
+                'os', $release_data['os_name'],
                 array('name'=>$release_data['os_name'])
             );
             $release_data['os_id'] = $os->id;
@@ -375,15 +375,15 @@ class Plugin_Model extends ORM_Resource {
             $release_data['platform_id'] = $platform->id;
 
             // Convert status name to status code from data.
-            if (!empty($release_data['status']) && 
+            if (!empty($release_data['status']) &&
                     !empty(self::$status_codes[$release_data['status']])) {
-                $release_data['status_code'] = 
+                $release_data['status_code'] =
                     self::$status_codes[$release_data['status']];
             }
 
             // Find and update or create the appropriate release.
             $release = ORM::find_or_insert(
-                'pluginrelease', 
+                'pluginrelease',
                 array(
                     'plugin_id'        => $plugin->id,
                     'os_id'            => $os->id,
@@ -404,8 +404,8 @@ class Plugin_Model extends ORM_Resource {
             $aliases['literal'][] = $release_data['name'];
         }
 
-        // Finally, create appropriate records to give the plugin aliases 
-        // based on specified literal and regex names, as well as literal 
+        // Finally, create appropriate records to give the plugin aliases
+        // based on specified literal and regex names, as well as literal
         // names accumulated from releases.
         $alias_ids = array();
         foreach (array('literal', 'regex') as $kind) {
@@ -425,7 +425,7 @@ class Plugin_Model extends ORM_Resource {
             }
         }
 
-        // Delete plugin aliases and releases not included in this import, 
+        // Delete plugin aliases and releases not included in this import,
         // assuming deletion by omission.
         if (!$delete_first) {
             if (!empty($alias_ids)) {
@@ -448,7 +448,7 @@ class Plugin_Model extends ORM_Resource {
 
         // Delete mimetypes for which there is no association to a plugin.
         $db->query("
-            DELETE mimes FROM mimes 
+            DELETE mimes FROM mimes
             LEFT JOIN mimes_plugins ON mimes_plugins.mime_id=mimes.id
             WHERE mimes_plugins.id IS null
         ");
@@ -497,13 +497,13 @@ class Plugin_Model extends ORM_Resource {
             return array();
         }
 
-        // Consult the cache first before hitting the DB, but only for 
+        // Consult the cache first before hitting the DB, but only for
         // non-sandbox lookups.
         // TODO: Cache invalidation timestamp based on mimetypes & what else?
         // TODO: Cache invalidation after the fact using a PFS ID timestamp in cache? (ie. stale-while-revalidate-ish)
         ksort($criteria);
         $cache_key = 'plugin_lookup_' . sha1(json_encode($criteria));
-        if (empty($criteria['sandboxScreenName']) && 
+        if (empty($criteria['sandboxScreenName']) &&
                 ($cache_data = @$this->cache->get($cache_key))) {
             return $cache_data;
         }
@@ -558,14 +558,14 @@ class Plugin_Model extends ORM_Resource {
             ->join('plugin_releases', 'plugin_releases.plugin_id', 'plugins.id')
             ->groupby('plugin_releases.id')
 
-            // HACK: (kind of) Since '*' sorts last in the list, this is roughly a 
+            // HACK: (kind of) Since '*' sorts last in the list, this is roughly a
             // relevance sort for platforms and OS
             ->orderby(array(
                 'plugin_releases.version' => 'DESC',
-                'oses.name' => 'DESC', 
-                'platforms.locale' => 'DESC', 
+                'oses.name' => 'DESC',
+                'platforms.locale' => 'DESC',
                 'platforms.app_id' => 'DESC',
-                'platforms.app_version' => 'DESC', 
+                'platforms.app_version' => 'DESC',
                 'platforms.app_release' => 'DESC',
             ))
             ;
@@ -630,12 +630,12 @@ class Plugin_Model extends ORM_Resource {
         // Finally, roll in all the columns needed.
         $this->db->select($select);
 
-        /* 
-         * Fetch all the rows and assemble the results.  
+        /*
+         * Fetch all the rows and assemble the results.
          *
-         * Note that plain column names are used here, rather than 
-         * fully-qualified table.column names.  This is so that column values 
-         * from the plugins table are overwritten by non-empty columns from the 
+         * Note that plain column names are used here, rather than
+         * fully-qualified table.column names.  This is so that column values
+         * from the plugins table are overwritten by non-empty columns from the
          * plugin_releases table, offering a sort of inheritance relationship.
          */
         $codes_to_status = array_flip(self::$status_codes);
@@ -646,7 +646,7 @@ class Plugin_Model extends ORM_Resource {
                 if (empty($row_in->{$select_name})) continue;
 
                 $value = $row_in->{$select_name};
-                $name = ('os_name' == $select_name) ? 
+                $name = ('os_name' == $select_name) ?
                     $select_name : $orig_name;
 
                 if ('status_code' == $name) {
@@ -668,8 +668,8 @@ class Plugin_Model extends ORM_Resource {
 
         /*
          * Group the releases by pfs_id, and reduce releases down to the
-         * single most relevant record per version.  That is, records with 
-         * non-wildcard matches are preferred over wildcard matches for OS / 
+         * single most relevant record per version.  That is, records with
+         * non-wildcard matches are preferred over wildcard matches for OS /
          * platform / etc.
          *
          * This might be better done in the database, but couldn't quite figure
@@ -682,11 +682,11 @@ class Plugin_Model extends ORM_Resource {
             $pfs_id  = $row['pfs_id'];
             $version = isset($row['version']) ? $row['version'] : '0.0.0';
 
-            // Initialize the structure for a plugin, if this is the first 
+            // Initialize the structure for a plugin, if this is the first
             // release seen.
             if (!isset($data[$pfs_id]['releases'])) {
                 $data[$pfs_id] = array(
-                    'aliases'  => array(), 
+                    'aliases'  => array(),
                     'releases' => array()
                 );
             }
@@ -728,7 +728,7 @@ class Plugin_Model extends ORM_Resource {
         }
 
         /*
-         * Perform some final massaging of the data for easier digestion in a 
+         * Perform some final massaging of the data for easier digestion in a
          * JS client.  Trade pfs_ids for numeric indices; separate releases into
          * the latest release and a list of others.
          */
@@ -741,11 +741,11 @@ class Plugin_Model extends ORM_Resource {
             );
 
             $rs = array(
-                'latest' => null,
+                'latest' => array(),
                 'others' => array()
             );
 
-            // Comb through releases to find most relevant latest, collect the 
+            // Comb through releases to find most relevant latest, collect the
             // rest under 'others'
             foreach ($plugin['releases'] as $version => $r) {
 
@@ -757,27 +757,13 @@ class Plugin_Model extends ORM_Resource {
                 if ('latest' != $r['status']) {
                     // Not a latest candidate, so stick it with the others.
                     $rs['others'][] = $r;
-                } else {
-                    // This release is the new latest if:
-                    $is_new_latest =
-                        // there's no latest chosen yet
-                        !$rs['latest'] ||
-                        // or this one has better relevance than the existing
-                        $r['relevance'] > $rs['latest']['relevance'] ||
-                        // or this one has the same relevance, but a higher version
-                        (
-                            $r['relevance'] == $rs['latest']['relevance'] &&
-                            $this->compareVersions($r['version'], 
-                                $rs['latest']['version']) > 0
-                        );
-                    if ($is_new_latest) {
-                        $rs['latest'] = $r;
-                    }
+                } else if ('latest' == $r['status'] && !isset($r['vulnerability_url'])) {
+                    $rs['latest'][] = $r;
                 }
             }
 
-            // No latest release found, so they're probably all vulnerable or 
-            // should be disabled. So, try finding the highest version and use 
+            // No latest release found, so they're probably all vulnerable or
+            // should be disabled. So, try finding the highest version and use
             // that as the latest.
             if (empty($rs['latest'])) {
                 $latest = null;
@@ -790,8 +776,8 @@ class Plugin_Model extends ORM_Resource {
                         $latest_idx = $idx;
                     }
                 }
-                if (!empty($latest)) { 
-                    $rs['latest'] = $latest; 
+                if (!empty($latest)) {
+                    $rs['latest'] = $latest;
                     array_splice($rs['others'], $latest_idx, 1);
                 }
             }
@@ -807,7 +793,7 @@ class Plugin_Model extends ORM_Resource {
 
             // Special case: if the latest shares a detected version with
             // another release having a non-latest status, mark it with a dubious
-            // status (i.e. in need of manual checking to account for imprecise 
+            // status (i.e. in need of manual checking to account for imprecise
             // version detection mechanism)
             if (!empty($plugin['releases']['latest']['detected_version'])) {
                 $ldv = $plugin['releases']['latest']['detected_version'];
@@ -828,20 +814,20 @@ class Plugin_Model extends ORM_Resource {
         }
         return $flat;
     }
-    
+
     /**
      * Calculate result relevance based on the criteria values.
      */
     public function calcRelevance($row, $criteria) {
         $rel = 0;
-        
+
         // First, bump relevance where the match was not a wildcard
         $cols = array('os_name', 'app_id', 'app_release', 'app_version', 'locale');
         foreach ($cols as $name) {
             if ('*' !== $row[$name]) $rel++;
         }
 
-        // Next, bump the relevance by how close to the top of the list of 
+        // Next, bump the relevance by how close to the top of the list of
         // normalized client OS alternatives the row's value matches.
         if (!empty($row['os_name']) && !empty($criteria['clientOS'])) {
             $l_os_name = strtolower($row['os_name']);
@@ -967,7 +953,7 @@ class Plugin_Model extends ORM_Resource {
      *
      * @returns bool
      */
-    public function is_sandboxed() 
+    public function is_sandboxed()
     {
         return !empty($this->sandbox_profile_id);
     }
@@ -1015,8 +1001,8 @@ class Plugin_Model extends ORM_Resource {
     {
         return ORM::factory('profile')
             ->join(
-                'plugins_trustedprofiles', 
-                'plugins_trustedprofiles.profile_id', 
+                'plugins_trustedprofiles',
+                'plugins_trustedprofiles.profile_id',
                 'profiles.id'
             )
             ->where('plugins_trustedprofiles.pfs_id', $this->pfs_id)
@@ -1033,7 +1019,7 @@ class Plugin_Model extends ORM_Resource {
         if (is_string($profile)) return false;
         $count = $this->db
             ->where(array(
-                'pfs_id'=>$this->pfs_id, 
+                'pfs_id'=>$this->pfs_id,
                 'profile_id'=>$profile->id
             ))
             ->count_records('plugins_trustedprofiles');
@@ -1074,8 +1060,8 @@ class Plugin_Model extends ORM_Resource {
 
 // {{{ Plugin and release properties
 
-/** 
- * HACK: Defined here because PHP doesn't like using _() function calls in the 
+/**
+ * HACK: Defined here because PHP doesn't like using _() function calls in the
  * class definition.
  */
 Plugin_Model::$status_choices = array(
@@ -1089,20 +1075,20 @@ Plugin_Model::$status_choices = array(
 );
 
 Plugin_Model::$properties = array(
-    'pfs_id' => array( 
-        'type' => 'text', 
+    'pfs_id' => array(
+        'type' => 'text',
         'description' => _("pfs_id of the plugin within PFS2")
     ),
-    'status' => array( 
-        'type' => 'status', 
+    'status' => array(
+        'type' => 'status',
         'description' => _("Current status of the release, eg. latest, outdated, vulnerable")
     ),
-    'name' => array( 
-        'type' => 'text', 
+    'name' => array(
+        'type' => 'text',
         'description' => _("Name of the plugin")
     ),
-    'version' => array( 
-        'type' => 'text', 
+    'version' => array(
+        'type' => 'text',
         'description' => _("A dot-separated normalized version for the plugin, may differ from official vendor versioning scheme in order to maintain internal consistency in PFS2")
     ),
     'detected_version' => array(
@@ -1113,105 +1099,105 @@ Plugin_Model::$properties = array(
         'type' => 'text',
         'description' => _("Detection scheme used in the client to derive the detected_version value")
     ),
-    'description' => array( 
-        'type' => 'textarea', 
+    'description' => array(
+        'type' => 'textarea',
         'description' => _("More verbose description of the plugin")
     ),
-    'vendor' => array( 
-        'type' => 'text', 
+    'vendor' => array(
+        'type' => 'text',
         'description' => _("Name of the vendor providing the plugin")
     ),
-    'guid' => array( 
-        'type' => 'text', 
+    'guid' => array(
+        'type' => 'text',
         'description' => _("A GUID for the plugin release, may differ between releases and platforms (unlike pfs_id)")
     ),
-    'vulnerability_description' => array( 
-        'type' => 'text', 
+    'vulnerability_description' => array(
+        'type' => 'text',
         'description' => _("For status vulnerable, a short description of security vulnerabilities for the plugin release")
     ),
-    'vulnerability_url' => array( 
+    'vulnerability_url' => array(
         'type' => 'text', 'validation' => 'url',
         'description' => _("For status vulnerable, a URL detailing security vulnerabilities for the plugin release")
     ),
-    'filename' => array( 
-        'type' => 'text', 
+    'filename' => array(
+        'type' => 'text',
         'description' => _("Filename of the plugin as installed")
     ),
-    'url' => array( 
-        'type' => 'text', 'validation' => 'url', 
+    'url' => array(
+        'type' => 'text', 'validation' => 'url',
         'description' => _("URL with details describing the plugin")
     ),
-    'icon_url' => array( 
-        'type' => 'text', 'validation' => 'url', 
+    'icon_url' => array(
+        'type' => 'text', 'validation' => 'url',
         'description' => _("URL to an image icon for the plugin")
     ),
-    'license_url' => array( 
-        'type' => 'text', 'validation' => 'url', 
+    'license_url' => array(
+        'type' => 'text', 'validation' => 'url',
         'description' => _("URL where the license for using the plugin may be found")
     ),
-    'manual_installation_url' => array( 
-        'type' => 'text', 'validation' => 'url', 
+    'manual_installation_url' => array(
+        'type' => 'text', 'validation' => 'url',
         'description' => _("URL for a manually-launched executable installer for the plugin")
     ),
-    'xpi_location' => array( 
-        'type' => 'text', 'validation' => 'url', 
+    'xpi_location' => array(
+        'type' => 'text', 'validation' => 'url',
         'description' => _("URL for an XPI-based installer for the plugin")
     ),
-    'installer_location' => array( 
-        'type' => 'text', 'validation' => 'url', 
+    'installer_location' => array(
+        'type' => 'text', 'validation' => 'url',
         'description' => _("URL for an executable installer for the plugin (mainly for Windows)")
     ),
-    'installer_hash' => array( 
-        'type' => 'text', 
+    'installer_hash' => array(
+        'type' => 'text',
         'description' => _("A hash of the installer contents for verifying its integrity")
     ),
-    'installer_shows_ui' => array( 
-        'type' => 'text', 
+    'installer_shows_ui' => array(
+        'type' => 'text',
         'description' => _("(0/1) whether or not the installer displays a user interface")
     ),
-    'needs_restart' => array( 
-        'type' => 'text', 
+    'needs_restart' => array(
+        'type' => 'text',
         'description' => _("(0/1) whether or not the OS needs to restart after plugin installation")
     ),
-    'xpcomabi' => array( 
-        'type' => 'text', 
+    'xpcomabi' => array(
+        'type' => 'text',
         'description' => _("(Not sure, inherited from PFS1, need a description)")
     ),
-    'min' => array( 
-        'type' => 'text', 
+    'min' => array(
+        'type' => 'text',
         'description' => _("(Not sure, inherited from PFS1, need a description)")
     ),
-    'max' => array( 
-        'type' => 'text', 
+    'max' => array(
+        'type' => 'text',
         'description' => _("(Not sure, inherited from PFS1, need a description)")
     ),
-    'app_id' => array( 
-        'type' => 'text', 
+    'app_id' => array(
+        'type' => 'text',
         'description' => _("Application ID for client app"),
         'parent' => 'platform'
     ),
-    'app_release' => array( 
-        'type' => 'text', 
+    'app_release' => array(
+        'type' => 'text',
         'description' => _("Client app release for which the plugin is intended (* is wildcard)"),
         'parent' => 'platform'
     ),
-    'app_version' => array( 
-        'type' => 'text', 
+    'app_version' => array(
+        'type' => 'text',
         'description' => _("Client app version for which the plugin is intended (* is wildcard)"),
         'parent' => 'platform'
     ),
-    'locale' => array( 
-        'type' => 'text', 
+    'locale' => array(
+        'type' => 'text',
         'description' => _("Client app locale for which the plugin is intended (* is wildcard)"),
         'parent' => 'platform'
     ),
-    'os_name' => array( 
-        'type' => 'text', 
+    'os_name' => array(
+        'type' => 'text',
         'description' => _("Client app OS for which the plugin is intended (* is wildcard)")
     ),
-    'modified' => array( 
-        'type' => 'text', 
-        'description' => _("Timestamp when last the release record was modified") 
+    'modified' => array(
+        'type' => 'text',
+        'description' => _("Timestamp when last the release record was modified")
     )
 );
 
