@@ -22,6 +22,7 @@
  *  object        - Enable or disable object results
  *  cache         - Enable or disable query caching
  *	escape        - Enable automatic query builder escaping
+ *  sql_mode      - Database sql mode
  */
 $config['default'] = array
 (
@@ -41,5 +42,6 @@ $config['default'] = array
 	'table_prefix'  => '',
 	'object'        => TRUE,
 	'cache'         => FALSE,
-	'escape'        => TRUE
+	'escape'        => TRUE,
+	'sql_mode'      => ''
 );

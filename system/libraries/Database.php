@@ -28,6 +28,7 @@ class Database_Core {
 		'object'        => TRUE,
 		'cache'         => FALSE,
 		'escape'        => TRUE,
+		'sql_mode'      => '',
 	);
 
 	// Database driver object

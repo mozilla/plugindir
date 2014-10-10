@@ -65,6 +65,11 @@ class Database_Mysql_Driver extends Database_Driver {
 				$this->set_charset($charset);
 			}
 
+			if ($sql_mode = $this->db_config['sql_mode'])
+			{
+				$this->set_sql_mode($sql_mode);
+			}
+
 			// Clear password after successful connect
 			$this->db_config['connection']['pass'] = NULL;
 
@@ -102,6 +107,11 @@ class Database_Mysql_Driver extends Database_Driver {
 	public function set_charset($charset)
 	{
 		$this->query('SET NAMES '.$this->escape_str($charset));
+	}
+
+	public function set_sql_mode($sql_mode)
+	{
+		$this->query('SET SESSION SQL_MODE='.$this->escape_str($sql_mode));
 	}
 
 	public function escape_table($table)
