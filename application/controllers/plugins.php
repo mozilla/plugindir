@@ -404,6 +404,7 @@ class Plugins_Controller extends Local_Controller {
                     $mac[] = $release;
                     break;
                 case 'linux':
+                case 'lin':
                     $lin[] = $release;
                     break;
             }
