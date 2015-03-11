@@ -366,8 +366,8 @@ class Plugins_Controller extends Local_Controller {
 
         foreach ($releases as $index => $release) {
 
-            $release['detected_version'] = substr($release['detected_version'], 1);
-            $release['version'] = substr($release['version'], 1);
+            $release['detected_version'] = substr($release['detected_version'], 2);
+            $release['version'] = substr($release['version'], 2);
             // Stick the amended array back onto the main container.
             $releases[$index] = $release;
         }
