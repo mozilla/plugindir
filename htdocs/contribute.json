@@ -1,0 +1,25 @@
+{    
+    "name": "Mozilla Plugins Directory",
+    "description": "Mozilla Plugins Directory",
+    "repository": {
+        "url": "https://github.com/mozilla/plugindir",
+        "license": "Mozilla Public License Version 1.1"
+    },
+    "bugs": {
+        "list": "https://github.com/mozilla/plugindir/issues",
+        "report": "https://github.com/mozilla/plugindir/issues"
+    },
+   "participate": {
+    "irc": "irc://irc.mozilla.org/#plugins",
+    "irc-contacts": [
+        "webops"
+    ]
+   },
+    "urls": {
+        "prod": "https://plugins.mozilla.org"
+    },
+    "keywords": [
+        "plugins",
+        "mozillaplugins"
+    ]
+}
